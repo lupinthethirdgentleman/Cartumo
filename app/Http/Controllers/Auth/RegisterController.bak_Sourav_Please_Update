@@ -1,0 +1,142 @@
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\User;
+use App\Profile;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\RegistersUsers;
+
+use Illuminate\Validation\Rule;
+
+class RegisterController extends Controller
+{
+    /*
+    |--------------------------------------------------------------------------
+    | Register Controller
+    |--------------------------------------------------------------------------
+    |
+    | This controller handles the registration of new users as well as their
+    | validation and creation. By default this controller uses a trait to
+    | provide this functionality without requiring any additional code.
+    |
+    */
+
+    use Mail;
+    use RegistersUsers;
+    use App\Mail\RegisterNotification;
+
+    /**
+     * Where to redirect users after registration.
+     *
+     * @var string
+     */
+    protected $redirectTo = '/profile';
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('guest');
+    }
+
+    /**
+     * Get a validator for an incoming registration request.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function validator(array $data)
+    {
+        return Validator::make($data, [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6|confirmed',
+            'secret_code_text' => [Rule::in(['eliteseller,proseller,""'])]
+            //'secret_code_text' => ['required', Rule::in(['eliteseller,proseller,default'])]
+            //'secret' => 'required|same:eliteseller',
+        ]);
+    }
+
+    /**
+     * Create a new user instance after a valid registration.
+     *
+     * @param  array  $data
+     * @return \App\User
+     */
+    protected function create(array $data)
+    {
+        //eliteseller
+
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => bcrypt($data['password']),
+            'secret'    => ( ($data['secret_code_text']==env('REGISTER_CODE_MONTHLY')) || ($data['secret_code_text']==env('REGISTER_CODE_YEARLY')) ) ? $data['secret_code_text'] : NULL,
+        ]);
+
+        //check if there is secret code
+        if ( empty($data['secret_code_text']) ) {
+            $this->redirectTo = '/subscription';
+        }
+
+        /* ********************* Profile ************************** */
+        $profile = new Profile;
+        $profile->user_id = $user->id;
+        $profile->save();
+
+
+
+        /* *********************** Send email notification ********************** */
+        $content = [
+    			'title'=> 'Cartumo Registration',
+    			'name'	=> $data['name'],
+    			'email'	=> $data['email'],
+        	'button' => 'Click Here'
+        ];
+        $receiverAddress = env('PRIMARY_EMAIL_ADDRESS');
+        Mail::to($receiverAddress)->send(new RegisterNotification($content));
+
+
+        /* *********************** Mailchimp subscription ********************** */
+        // MailChimp API credentials
+        $apiKey = 'd4dcecbad1fe6d26f1efab03428d3b69-us9';
+        $listID = 'c2fbc7e13d';
+
+        // MailChimp API URL
+        $memberID = md5(strtolower($data['email']));
+        $dataCenter = substr($apiKey,strpos($apiKey,'-')+1);
+        $url = 'https://' . $dataCenter . '.api.mailchimp.com/3.0/lists/' . $listID . '/members/' . $memberID;
+        $names = explode(' ', $data['name']);
+
+        // member information
+        $json = json_encode([
+            'email_address' => $data['email'],
+            'status'        => 'subscribed',
+            'merge_fields'  => [
+                'FNAME'     => $names[0],
+                'LNAME'     => (!empty($names[1])) ? $names[1] : ''
+            ]
+        ]);
+
+        // send a HTTP POST request with curl
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_USERPWD, 'user:' . $apiKey);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+        $result = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+
+        return $user;
+    }
+}

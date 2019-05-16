@@ -1,0 +1,133 @@
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+use App\UserPaymentGateway;
+use App\AdminPaymentGateway;
+
+use Auth;
+
+class PaymentGateway extends Model
+{
+    private $gateways = array(
+
+        'paypal'   => array(
+            array(
+                'title'     => 'Cartumo',
+                'client_id' => 'ActiWUY8G09YfKycQgHHtOlvdqPfbrRmRGd5tU0Pi9_7sqgoyD_f4wwWrFSPdPxYxgbWuoH3nfR-tPbU',
+                'secret'    => 'EHUJ8SZADtjAqbgAi2Xkmf8GSdPKa8OVLwcn3b2a4TEzjVrS380pjafM9l6ORX4cr50cMrQwlJDKi-wI',
+                'email'     => 'zeenatkrizvi@yahoo.com',
+                'mode'      => 'Live',
+                'icon'      => 'fa fa-paypal'
+            ),
+        ),
+        'stripe'   => array(
+            array(
+                'title'     => 'Cartumo',
+                'secret_key'        => 'sk_live_BlnICqCadOjfYtkH2KuRA1yt',
+                'publishable_key'   => 'pk_live_OjDImmPHfyCfddSQNwk5Ibe3',
+                'icon'              => 'fa fa-cc-stripe'
+            ),
+        )
+    );
+
+
+    public function getPaymentGateway($gateway_name=NULL) {
+
+        $gateways = array();
+
+        if ( $gateway_name !== NULL ) {
+            return $this->gateways[strtolower($gateway_name)];
+        }
+
+        foreach ( $this->gateways as $key=>$item ) {
+            $userPaymentGateway = UserPaymentGateway::where('user_id', Auth::user()->id)->get();
+            $flag = FALSE;
+
+            foreach ( $userPaymentGateway as $gateway ) {
+                if ( $gateway->type == $key ) {
+                    $flag = TRUE;
+                    break;
+                }
+            }
+
+            if ( $flag ) {
+                $gateways[$key] = $item;
+            }
+        }
+
+        //echo '<pre>'; print_r($gateways); die;
+
+        return $gateways;
+    }
+
+
+
+    public function getAvailablePaymentGateway($gateway_name=NULL) {
+
+        $gateways = array();
+
+        if ( $gateway_name !== NULL ) {
+            return $this->gateways[strtolower($gateway_name)];
+        }
+
+        foreach ( $this->gateways as $key=>$item ) {
+            $userPaymentGateway = UserPaymentGateway::where('user_id', Auth::user()->id)->get();
+            $flag = FALSE;
+
+            foreach ( $userPaymentGateway as $gateway ) {
+                if ( $gateway->type == $key ) {
+                    $flag = TRUE;
+                    break;
+                }
+            }
+
+            if ( !$flag ) {
+                $gateways[$key] = $item;
+            }
+        }
+
+        //echo '<pre>'; print_r($gateways); die;
+
+        return $gateways;
+    }
+
+
+    public function getAvailablePaymentGatewayAdmin($gateway_name=NULL) {
+        
+                $gateways = array();
+        
+                if ( $gateway_name !== NULL ) {
+                    return $this->gateways[strtolower($gateway_name)];
+                }
+        
+                foreach ( $this->gateways as $key=>$item ) {
+                    $adminPaymentGateway = AdminPaymentGateway::where('admin_id', Auth::user()->id)->get();
+                    $flag = FALSE;
+        
+                    foreach ( $adminPaymentGateway as $gateway ) {
+                        if ( $gateway->type == $key ) {
+                            $flag = TRUE;
+                            break;
+                        }
+                    }
+        
+                    if ( !$flag ) {
+                        $gateways[$key] = $item;
+                    }
+                }
+        
+                //echo '<pre>'; print_r($gateways); die;
+        
+                return $gateways;
+    }
+
+
+    public static function isSetup($gateway_name) {
+        $gateways = UserPaymentGateway::where('type', $gateway_name)->first();
+
+        return $gateways;
+    }
+}

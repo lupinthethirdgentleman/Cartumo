@@ -1,0 +1,2 @@
+[06-Oct-2018 02:26:31 UTC] PHP Notice:  getimagesize(): Read error! in /home/mjjg9rs5wcaf/public_html/public/asset/Timthumb.php on line 451
+[28-Oct-2018 10:52:14 UTC] PHP Warning:  fopen(./cache/timthumb_int_4a67400361ed3a19688a9d3de4323d65.timthumb.txt): failed to open stream: No such file or directory in /home/mjjg9rs5wcaf/public_html/public/asset/Timthumb.php on line 913

@@ -1,0 +1,9 @@
+{
+    "/js/app.js": "/js/app.js",
+    "/css/app.css": "/css/app.css",
+    "/css/style.css": "/css/style.css",
+    "/frontend/css/style.css": "/frontend/css/style.css",
+    "/js/script.js": "/js/script.js",
+    "/frontend/js/script.js": "/frontend/js/script.js",
+    "/frontend/js/jquery.min.js": "/frontend/js/jquery.min.js"
+}
