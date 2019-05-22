@@ -177,7 +177,6 @@
                                     @if ( empty($templates) )
                                         <h2>{{ $currentStep->display_name }}</h2>
                                         <ul class="nav navbar-right panel_toolbox">
-                                            <!-- <li><a href="#">this</a></li> -->
                                             <li>
                                                 <a href="{{ route('steps.show', array($funnel->id, $currentStep->id)) }}"
                                                    class="collapse-link active"><i class="fa fa-pie-chart"

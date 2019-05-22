@@ -129,6 +129,7 @@
                             <div class="x_title">
                                 <h2>Link Product to {{ $currentStep->display_name }}</h2>
                                 <ul class="nav navbar-right panel_toolbox">
+                                    <li><a href="#"></li>
                                     <li><a href="{{ route('steps.show', array($funnel->id, $currentStep->id)) }}"
                                            class="collapse-links"><i class="fa fa-pie-chart" aria-hidden="true"></i>
                                             &nbsp;
@@ -1192,17 +1193,17 @@
 
             //$("#shopifyModal .modal-body").append(""); //ajax-loader.gif
 
-            console.log("This", {{ $funnel->type }});
+
             $.ajax({
                 type: 'GET',
                 url: "{{ route('bump.product.list', array($currentStep->id)) }}",
                 data: "_token={{ csrf_token() }}&type={{ $funnel->type }}",
                 success: function (response) {
-                    // console.log(response);
+                    console.log(response);
                     $("#bump_product_list").html(response);
                 },
                 error: function (a, b) {
-                    // console.log(a.responseText);
+                    console.log(a.responseText);
                 }
             });
         });

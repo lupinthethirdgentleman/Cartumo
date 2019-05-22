@@ -1192,7 +1192,7 @@
 
             //$("#shopifyModal .modal-body").append(""); //ajax-loader.gif
 
-            console.log("This", {{ $funnel->type }});
+
             $.ajax({
                 type: 'GET',
                 url: "{{ route('bump.product.list', array($currentStep->id)) }}",

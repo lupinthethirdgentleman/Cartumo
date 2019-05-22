@@ -1058,12 +1058,12 @@
                                                         </ul>
                                                         <div id="myTabContent" class="tab-content">
 
-                                                            @if ( !empty($productEmailIntegration) )
+                                                            <!-- @if ( !empty($productEmailIntegration) )
 																<?php $emailSettings = json_decode( $productEmailIntegration->details, TRUE ); ?>
                                                                 <script>var list_id = "{{ $emailSettings['integration']['list_id'] }}";</script>
                                                             @else
                                                                 <script>var list_id = "";</script>
-                                                            @endif
+                                                            @endif -->
 
                                                             <div role="tabpanel" class="tab-pane fade active in"
                                                                  id="product_tab_settings"
@@ -1192,17 +1192,17 @@
 
             //$("#shopifyModal .modal-body").append(""); //ajax-loader.gif
 
-            console.log("This", {{ $funnel->type }});
+
             $.ajax({
                 type: 'GET',
                 url: "{{ route('bump.product.list', array($currentStep->id)) }}",
                 data: "_token={{ csrf_token() }}&type={{ $funnel->type }}",
                 success: function (response) {
-                    // console.log(response);
+                    console.log(response);
                     $("#bump_product_list").html(response);
                 },
                 error: function (a, b) {
-                    // console.log(a.responseText);
+                    console.log(a.responseText);
                 }
             });
         });

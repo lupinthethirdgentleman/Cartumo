@@ -177,13 +177,13 @@
                                     @if ( empty($templates) )
                                         <h2>{{ $currentStep->display_name }}</h2>
                                         <ul class="nav navbar-right panel_toolbox">
-                                            <!-- <li><a href="#">this</a></li> -->
-                                            <li>
+                                            <button>Add bump product</button>
+                                            <!-- <li>
                                                 <a href="{{ route('steps.show', array($funnel->id, $currentStep->id)) }}"
                                                    class="collapse-link active"><i class="fa fa-pie-chart"
                                                                                    aria-hidden="true"></i> &nbsp;
                                                     Overview</a>
-                                            </li>
+                                            </li> -->
 
                                             @if ( (strtolower($currentType->name) == 'sales') || (strtolower($currentType->name) == 'product') || (strtolower($currentType->name) == 'upsell') || (strtolower($currentType->name) == 'downsell') )
                                                 <li>

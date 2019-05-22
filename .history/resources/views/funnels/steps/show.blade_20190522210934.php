@@ -24,34 +24,39 @@
         }
 
         .blank-template-add {
-            min-height: 210px;
-            width: %100;
+            min-height: 199px;
+            width: 100%;
             display: flex;
             flex-direction: row;
             flex-wrap: wrap;
             justify-content: center;
             align-items: center;
         }
+
         .blank-template-add > .content-middle {
             width: 80%;
             height: auto;
             margin: 10px;
-            padding:5px;
-            color:#1abb9c;
+            padding: 5px;
+            color: #1abb9c;
             text-align: center;
         }
+
         .blank-template-add > .content-middle > i {
             font-size: 24px;
         }
+
         .blank-template-add:hover {
             border: 2px solid #1abb9c;
         }
+
         .blank-template-button {
             background: transparent;
             border: 0px;
             color: #333;
             font-size: 15px;
         }
+
         .blank-template-add:hover .blank-template-button {
             color: #1abb9c;
         }
@@ -73,12 +78,15 @@
                             <ul>
                                 <li>
                                     @if ( $funnel->type == 'manual' )
-                                        <img src="{{ asset('frontend/images/manual-product.png') }}" />
+                                        <a href="{{ route('funnels.show', $funnel->id) }}"><img
+                                                    src="{{ asset('frontend/images/manual-product.png') }}"/></a>
                                     @else
-                                        <img src="{{ asset('frontend/images/shopify-product.png') }}" />
+                                        <a href="{{ route('funnels.show', $funnel->id) }}"><img
+                                                    src="{{ asset('frontend/images/shopify-product.png') }}"/></a>
                                     @endif
                                 </li>
-                                <li><h3>{{ $funnel->name }}</h3></li>
+                                <li><a href="{{ route('funnels.show', $funnel->id) }}"><h3>{{ $funnel->name }}</h3></a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -86,21 +94,27 @@
 
                     <div class="col-md-7 text-right">
                         <ul class="funnel-inner-header-menu text-right">
-                            <li><a href="{{ route('steps.index', $funnel->id) }}" class="{{ (!empty($currentStep)) ? 'active' : '' }}"><span
+                            <li><a href="{{ route('funnels.show', $funnel->id) }}"><span
+                                            class="fa fa-dashboard"></span> Dashboard</a></li>
+                            <li><a href="{{ route('steps.index', $funnel->id) }}"
+                                   class="{{ (!empty($currentStep)) ? 'active' : '' }}"><span
                                             class="fa fa-bars"></span> Steps</a></li>
                         <!--<li><a href="#" class="{{ (!empty($currentStats)) ? 'active' : '' }}"><span
                                             class="fa fa-bar-chart"></span> Stats</a></li>-->
-                            <li><a href="{{ route('contacts.index', $funnel->id) }}" class="{{ (!empty($currentContacts)) ? 'active' : '' }}"><span
+                            <li><a href="{{ route('contacts.index', $funnel->id) }}"
+                                   class="{{ (!empty($currentContacts)) ? 'active' : '' }}"><span
                                             class="fa fa-users"></span> Contacts</a></li>
-                            <li><a href="{{ route('funnel.sales.index', $funnel->id) }}" class="{{ (!empty($currentSales)) ? 'active' : '' }}"><span
+                            <li><a href="{{ route('funnel.sales.index', $funnel->id) }}"
+                                   class="{{ (!empty($currentSales)) ? 'active' : '' }}"><span
                                             class="fa fa-money"></span> Sales</a></li>
                             <li><a href="{{ route('funnels.edit', [$funnel->id]) }}"><span class="fa fa-cog"
                                                                                            aria-hidden="true"></span>Settings</a>
                             </li>
 
                             @if ( App\UserUpgrade::isUpgradeAvailable(Auth::id(), 2) )
-                                <li><a href="{{ route('funnels.upload.store', [$funnel->id]) }}" class="{{ (!empty($uploads)) ? 'active' : '' }}"><span
-                                            class="fa fa-cloud-upload"></span> Upload</a></li>
+                                <li><a href="{{ route('funnels.upload.store', [$funnel->id]) }}"
+                                       class="{{ (!empty($uploads)) ? 'active' : '' }}"><span
+                                                class="fa fa-cloud-upload"></span> Upload</a></li>
                             @endif
                         </ul>
                     </div>
@@ -122,12 +136,13 @@
                                 @foreach ($steps as $key => $step)
 
                                     @if ( $step->id == $currentStep->id )
-                                        <li class="ui-state-default active" data-sort-position="{{ $step->order_position }}"
+                                        <li class="ui-state-default active"
+                                            data-sort-position="{{ $step->order_position }}"
                                             data-step-id="{{ $step->id }}">
                                             <a data-funnel-id="{{ $funnel->id }}" data-step-id="{{ $step->id }}"
                                                href="{{ route('steps.show', array($funnel->id, $step->id)) }}">
                                                 <ul class="step-details funnel-steps-items">
-                                                    <li><?php echo App\FunnelType::getIcon($step->type) ?></li>
+                                                    <li><?php echo App\FunnelType::getIcon( $step->type ) ?></li>
                                                     <li>{{ $step->display_name }}
                                                         <small class="step-footer">{{ App\FunnelType::getTypeName($step->type) }}</small>
                                                     </li>
@@ -141,7 +156,7 @@
                                             <a data-funnel-id="{{ $funnel->id }}" data-step-id="{{ $step->id }}"
                                                href="{{ route('steps.show', array($funnel->id, $step->id)) }}">
                                                 <ul class="step-details funnel-steps-items">
-                                                    <li><?php echo App\FunnelType::getIcon($step->type) ?></li>
+                                                    <li><?php echo App\FunnelType::getIcon( $step->type ) ?></li>
                                                     <li>{{ $step->display_name }}
                                                         <small class="step-footer">{{ App\FunnelType::getTypeName($step->type) }}</small>
                                                     </li>
@@ -168,8 +183,6 @@
                     <div class="col-md-8 col-sm-12 col-xs-12 funnel-step-area">
 
 
-
-
                         <div class="x_panel">
                             @if ( !empty($currentStep) )
 
@@ -177,7 +190,16 @@
                                     @if ( empty($templates) )
                                         <h2>{{ $currentStep->display_name }}</h2>
                                         <ul class="nav navbar-right panel_toolbox">
-                                            <!-- <li><a href="#">this</a></li> -->
+                                            
+                                            @if ( (strtolower($currentType->name) == 'order'))
+                                            <li>
+                                            <span><button type="button" id="button_bump_product_manual"
+                                                                  class="btn special-button-warning btn-lg"
+                                                                  data-toggle="modal"
+                                                                  data-target="#bumpProductModal">
+                                                                    <i class="fa fa-plus" aria-hidden="true"></i> Add Bump Product</button>
+                                                    </span></li>
+                                            @endif
                                             <li>
                                                 <a href="{{ route('steps.show', array($funnel->id, $currentStep->id)) }}"
                                                    class="collapse-link active"><i class="fa fa-pie-chart"
@@ -195,11 +217,11 @@
 
                                                 <li>
                                                     <a href="{{ route('funnel.step.integration.show', array($funnel->id, $currentStep->id)) }}"
-                                                    class="collapse-link"><i class="fa fa-plug"></i> &nbsp;
+                                                       class="collapse-link"><i class="fa fa-plug"></i> &nbsp;
                                                         Integration</a>
                                                 </li>
 
-                                                <!--<li>
+                                            <!--<li>
                                                     <a href="{{ route('funnel.step.integration.show', array($funnel->id, $currentStep->id)) }}"
                                                     class="collapse-link"><i class="fa fa-plug"></i> &nbsp;
                                                         Integration</a>
@@ -208,29 +230,32 @@
 
                                                 <li>
                                                     <a href="{{ route('funnel.step.integration.show', array($funnel->id, $currentStep->id)) }}"
-                                                    class="collapse-link"><i class="fa fa-plug"></i> &nbsp;
+                                                       class="collapse-link"><i class="fa fa-plug"></i> &nbsp;
                                                         Integration</a>
                                                 </li>
 
                                             @elseif ( (strtolower($currentType->name) == 'order') )
-                                                <!--<li>
+                                            <!-- <li>
                                                     <a href="{{ route('funnel.step.integration.show', array($funnel->id, $currentStep->id)) }}"
                                                     class="collapse-link"><i class="fa fa-plug"></i> &nbsp;
                                                         Integration</a>
-                                                </li>-->
+                                                </li> -->
                                             @elseif ( (strtolower($currentType->name) == 'confirmation') )
                                                 <li>
                                                     <a href="{{ route('funnel.step.email.show', array($funnel->id, $currentStep->id)) }}"
-                                                    class="collapse-link"><i class="fa fa-envelope" aria-hidden="true"></i> &nbsp;
+                                                       class="collapse-link"><i class="fa fa-envelope"
+                                                                                aria-hidden="true"></i> &nbsp;
                                                         Email</a>
                                                 </li>
+                                            
                                             @endif
                                         </ul>
                                     @else
-                                        <h2>Templates for {{ $currentStep->display_name }}</h2>
+                                        <h2>Templates for <strong>{{ $currentStep->display_name }}</strong> page</h2>
                                     @endif
-                                    <div class="clearfix"></div>
+                                    <div class="clearfix"></div><br>
                                 </div>
+                                
                                 <div class="x_content funnel-templates">
 
                                     @if ( !empty($page->id) )
@@ -266,43 +291,77 @@
                                     @endif
 
                                     @if ( !empty($templates) )
-                                        @foreach ($templates as $key => $template)
-                                            <div class="col-lg-3 col-md-3 col-xs-6 template-item">
-                                                @if ( $template->type > 0 )
-                                                    <a href="#">
-                                                    <!--<img class="img-responsive img-dynamic" src="{{ asset('admin/img/no-image-featured-image.png') }}" alt="">-->
-                                                        <img class="img-responsive img-dynamic"
-                                                            src="{{ $template->image }}"
-                                                            alt="">
-                                                        <h4 class="text-center">{{ $template->title }}</h4>
-                                                    </a>
-
-
-                                                    <div class="overlay">
-                                                        <button class="btn btn-success select-funnel-template"
-                                                                data-step-id="{{ $currentStep->id }}"
-                                                                data-template-id="{{ $template->id }}"
-                                                                data-funnel-id="{{ $funnel->id }}">
-                                                            <i class="fa fa-plus" aria-hidden="true"></i> Select Template
-                                                        </button>
-                                                        <br/>
-                                                        <a href="{{ route('pages.show', $template->id) }}"
-                                                        class="btn btn-primary" target="_blank"><i class="fa fa-eye"
-                                                                                                    aria-hidden="true"></i>
-                                                            Preview</a>
-                                                    </div>
-                                                @else
-                                                    <div class="blank-template-add">
-                                                        <div class="content-middle">
-                                                            <button class="btn btn-success select-funnel-template blank-template-button"
-                                                                data-step-id="{{ $currentStep->id }}"
-                                                                data-template-id="{{ $template->id }}"
-                                                                data-funnel-id="{{ $funnel->id }}">
-                                                            <i class="fa fa-plus" aria-hidden="true"></i> New Template
-                                                            </button>
+                                        <div class="col-lg-4 col-md-4 col-xs-6 template-item">
+                                            <div class="wrap">
+                                                <div class="wrap-image">
+                                                    
+                                                        <!--<img class="img-responsive img-dynamic" src="{{ asset('admin/img/no-image-featured-image.png') }}" alt="">-->
+                                                            <img class="img-responsive img-dynamic"
+                                                                 src="{{ $blankTemplate->image }}"
+                                                                 alt="">
                                                         </div>
-                                                    </div>
-                                                @endif
+
+                                                        <h4 class="text-center">{{ $blankTemplate->title }}</h4>
+
+                                                        <div class="overlay">
+                                                            <button class="btn btn-success select-funnel-template"
+                                                                    data-step-id="{{ $currentStep->id }}"
+                                                                    data-template-id="{{ $blankTemplate->id }}"
+                                                                    data-funnel-id="{{ $funnel->id }}">
+                                                                <i class="fa fa-plus" aria-hidden="true"></i> Select
+                                                                Template
+                                                            </button>
+                                                            <br/>
+                                                            <a href="{{ route('pages.show', $blankTemplate->id) }}"
+                                                               class="btn btn-primary" target="_blank"><i
+                                                                        class="fa fa-eye"
+                                                                        aria-hidden="true"></i>
+                                                                Preview</a>
+                                                        </div>
+                                            </div>
+                                        </div>
+                                        @foreach ($templates as $key => $template)
+                                            <div class="col-lg-4 col-md-4 col-xs-6 template-item">
+                                                <div class="wrap">
+                                                    @if ( $template->type > 0 )
+                                                        <div class="wrap-image">
+                                                        <!--<img class="img-responsive img-dynamic" src="{{ asset('admin/img/no-image-featured-image.png') }}" alt="">-->
+                                                            <img class="img-responsive img-dynamic"
+                                                                 src="{{ $template->image }}"
+                                                                 alt="">
+                                                        </div>
+
+                                                        <h4 class="text-center">{{ $template->title }}</h4>
+
+                                                        <div class="overlay">
+                                                            <button class="btn btn-success select-funnel-template"
+                                                                    data-step-id="{{ $currentStep->id }}"
+                                                                    data-template-id="{{ $template->id }}"
+                                                                    data-funnel-id="{{ $funnel->id }}">
+                                                                <i class="fa fa-plus" aria-hidden="true"></i> Select
+                                                                Template
+                                                            </button>
+                                                            <br/>
+                                                            <a href="{{ route('pages.show', $template->id) }}"
+                                                               class="btn btn-primary" target="_blank"><i
+                                                                        class="fa fa-eye"
+                                                                        aria-hidden="true"></i>
+                                                                Preview</a>
+                                                        </div>
+                                                    @else
+                                                        <div class="blank-template-add">
+                                                            <div class="content-middle">
+                                                                <button class="btn btn-success select-funnel-template blank-template-button"
+                                                                        data-step-id="{{ $currentStep->id }}"
+                                                                        data-template-id="{{ $template->id }}"
+                                                                        data-funnel-id="{{ $funnel->id }}">
+                                                                    <i class="fa fa-plus" aria-hidden="true"></i> New
+                                                                    Template
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                </div>
                                             </div>
                                         @endforeach
                                     @else
@@ -318,7 +377,7 @@
                                                             <!--<img id="p2i_demo" src="http://api.page2images.com/directlink?p2i_url={{ route('pages.show', $page->id) }}&p2i_device=6&p2i_screen=1024x768&p2i_size=100x0&p2i_fullpage=1&p2i_screenframe=desktop&p2i_key=1b59ddf9fa7951a6" />-->
                                                                 <img id="p2i_demo"
                                                                      src="{{ asset('images/ajax-loader.gif') }}"
-                                                                     data-page-id="{{ $page->id }}" />
+                                                                     data-page-id="{{ $page->id }}"/>
                                                             </div>
 
                                                             <div class="panel-footer">
@@ -327,19 +386,27 @@
                                                                        class="btn special-button-warning"><i
                                                                                 class="fa fa-pencil-square-o"
                                                                                 aria-hidden="true"></i> Edit Page</a>
-                                                                    <button type="button" id="btn_reload_editor" class="btn special-button-success" style="color: #374B5F !important;" title="Reload Editor" tooltip="Click this button to reload the editor">
+                                                                    <button type="button" id="btn_reload_editor"
+                                                                            class="btn special-button-success"
+                                                                            style="color: #374B5F !important;"
+                                                                            title="Reload Editor"
+                                                                            tooltip="Click this button to reload the editor">
                                                                         <i class="fa fa-refresh" aria-hidden="true"></i>
                                                                     </button>
-                                                                    <a href="{{ route('pages.show', $page->id) }}"
-                                                                       class="btn special-button-default" target="_blank" style="color: #374B5F !important;"><span
+                                                                    <a href="{{ route('page.view', $page->slug) }}"
+                                                                       class="btn special-button-default"
+                                                                       target="_blank"
+                                                                       style="color: #374B5F !important;"><span
                                                                                 class="glyphicon glyphicon-eye-open"></span></a>
 
-                                                                    <!--<button data-page-id="{{ $page->id }}"
+                                                                <!--<button data-page-id="{{ $page->id }}"
                                                                             class="btn btn-danger page-template-remove">
                                                                         <i class="fa fa-trash"
                                                                                 aria-hidden="true"></i>
                                                                     </button>-->
-                                                                    <button type="button" class="btn special-button-default" style="color: #374B5F !important;"
+                                                                    <button type="button"
+                                                                            class="btn special-button-default"
+                                                                            style="color: #374B5F !important;"
                                                                             data-action-url="{{ route('funnel.step.clone', [$currentStep->funnel_id, $currentStep->id]) }}"
                                                                             data-toggle="modal"
                                                                             data-target="#editFunnelModal">
@@ -348,8 +415,6 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-
-
 
 
                                                     </div>
@@ -394,6 +459,70 @@
 
 
                                             </div>
+                                <div id="bumpProductModal" class="modal fade" role="dialog">
+                                    <div class="modal-dialog modal-lg">
+                                        <form id="frm_bump_product_settings" class="form-horizontal">
+                                            <!-- Modal content-->
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close"
+                                                            data-dismiss="modal">&times;
+                                                    </button>
+                                                    <h4 class="modal-title">Choose Bump Product</h4>
+                                                </div>
+                                                <div class="modal-body" id="paragraph_settings_body">
+
+                                                    <div class="" role="tabpanel" data-example-id="togglable-tabs">
+                                                        <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
+                                                            <li role="presentation" class="active"><a
+                                                                        href="#product_tab_settings"
+                                                                        id="home-tab" role="tab" data-toggle="tab"
+                                                                        aria-expanded="true"><i
+                                                                            class="fa fa-envelope"
+                                                                            aria-hidden="true"></i>
+                                                                    &nbsp; Product </a>
+                                                            </li>
+                                                        </ul>
+                                                        <div id="myTabContent" class="tab-content">
+
+                                                            @if ( !empty($productEmailIntegration) )
+																<?php $emailSettings = json_decode( $productEmailIntegration->details, TRUE ); ?>
+                                                                <script>var list_id = "{{ $emailSettings['integration']['list_id'] }}";</script>
+                                                            @else
+                                                                <script>var list_id = "";</script>
+                                                            @endif
+
+                                                            <div role="tabpanel" class="tab-pane fade active in"
+                                                                 id="product_tab_settings"
+                                                                 aria-labelledby="home-tab">
+
+                                                                <div id="bump_product_list"><i
+                                                                            class="fa fa-circle-o-notch fa-spin"
+                                                                            style="font-size:24px;vertical-align: middle"></i>&nbsp;loading
+                                                                    products...
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
+                                                    <input type="hidden" name="product_type"
+                                                           value="{{ $funnel->type }}"/>
+                                                    <input type="hidden" name="chk_bump_product"
+                                                           id="chk_bump_product"
+                                                           value="yes"/>
+
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                    <!--<button type="submit" class="btn btn-success"
+                                                            id="update_bump_product_settings"> Save Product
+                                                    </button>-->
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                                         @else
                                             <p>No Template</p>
                                         @endif
@@ -478,22 +607,22 @@
                         <label for="step_name">Change Name Of Funnel Step</label>
                         <!--<input type="text" name="step_name" class="form-control" placeholder="Provide page name" />-->
 
-                        <!--<select name="step_name" class="form-control" required>
+                    <!--<select name="step_name" class="form-control" required>
                             <option>--SELECT--</option>
                             @foreach ($funnelTypes as $key => $type)
-                                @if ( $type->id == $currentStep->type )
-                                    <option value="{{ $type->id }}" selected>{{ $type->name }}</option>
+                        @if ( $type->id == $currentStep->type )
+                            <option value="{{ $type->id }}" selected>{{ $type->name }}</option>
                                 @else
-                                    <option value="{{ $type->id }}">{{ $type->name }}</option>
+                            <option value="{{ $type->id }}">{{ $type->name }}</option>
                                 @endif
-                            @endforeach
-                        </select>-->
+                    @endforeach
+                            </select>-->
 
                         <input type="text" name="display_name" class="form-control" placeholder="Display page name"
                                value="{{ (!empty($currentStep->display_name)) ? $currentStep->display_name : '' }}"
-                               required />
+                               required/>
                     </div>
-                    <!--<br/>
+                <!--<br/>
 
                     <div class="fom-group">
                         <label for="display_name">Slug</label>
@@ -520,8 +649,26 @@
 
 
 @section('scripts')
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script>
+                $("#button_bump_product_manual").click(function (e) {
+                        console.log("THTHTHTHTHTHTHTHTHTHTHT");
+//$("#shopifyModal .modal-body").append(""); //ajax-loader.gif
+
+
+// $.ajax({
+//     type: 'GET',
+//     url: "{{ route('bump.product.list', array($currentStep->id)) }}",
+//     data: "_token={{ csrf_token() }}&type={{ $funnel->type }}",
+//     success: function (response) {
+//         console.log(response);
+//         $("#bump_product_list").html(response);
+//     },
+//     error: function (a, b) {
+//         console.log(a.responseText);
+//     }
+// });
+});
         $(function () {
             $("#sortable").sortable({
                 update: function (event, ui) {
@@ -572,9 +719,6 @@
         });
 
 
-
-
-
         //select a templet for funnel
         $(document).on('click', '.select-funnel-template', function (e) {
 
@@ -588,11 +732,11 @@
                 type: 'GET',
                 url: "{{ route('pages.template.add', $currentStep->id) }}", //$("#hid_base_url").val() + '/pages/add-template/' + step_id,
                 data: 'page_template_id=' + $(this).attr('data-template-id') + '&funnel_id=' + $(this).attr('data-funnel-id') + '&step_id=' + $(this).attr('data-step-id'),
-                beforeSend: function() {
+                beforeSend: function () {
                     //$("body").append("<iframe src='' id='iframe_updater' style='display: none'></iframe>");
                 },
                 success: function (response) {
-                    //alert(response);
+                    console.log(response);
 
                     var json = JSON.parse(response);
 
@@ -604,8 +748,8 @@
 
                         //after update
                         //$("#iframe_updater").load(function () {
-                            location.href = json.url;
-                            location.href = location.href;
+                        //location.href = json.url;
+                        location.href = location.href;
                         //});
 
                         //location.href = location.href;
@@ -617,8 +761,6 @@
                 }
             });
         });
-
-
 
 
         //////////////////////////////////////
@@ -655,19 +797,19 @@
             //after update
             //$("#iframe_updater").load(function () {
 
-                //$("#iframe_updater").hide();
+            //$("#iframe_updater").hide();
 
-                //alert($("#iframe_updater").contents().find('body #hid_page_screen').val());
-                //alert(self.parent.opener.document.getElementById('image_screenshoot')[0].getAttribute("src"));
-                //$("#p2i_demo").attr('src', $("#iframe_updater").contents().find('body #hid_page_screen').val());
+            //alert($("#iframe_updater").contents().find('body #hid_page_screen').val());
+            //alert(self.parent.opener.document.getElementById('image_screenshoot')[0].getAttribute("src"));
+            //$("#p2i_demo").attr('src', $("#iframe_updater").contents().find('body #hid_page_screen').val());
 
-                //alert(window.frames[0].window.img);
+            //alert(window.frames[0].window.img);
 
 
-                /*$.ajax({
-                    type: 'GET',
-                    //url: $("#hid_base_url").val() + '/page/' + page_id + '/screenshoot',
-                    url: "{{ route('page.screenshoot.show', $page->id) }}",
+            /*$.ajax({
+                type: 'GET',
+                //url: $("#hid_base_url").val() + '/page/' + page_id + '/screenshoot',
+                url: "{{ route('page.screenshoot.show', $page->id) }}",
                     data: "_token={{ csrf_token() }}",
                     success: function (response) {
                         console.log(response);
@@ -714,48 +856,94 @@
 
     @if ( !empty($page) )
         <script>
-                $(document).ready(function(e) {
-                    $("body").append("<iframe src='' id='iframe_updater' style='display: none'></iframe>");
-                    $("#iframe_updater").attr('src', "{{ route('pages.update.template', $page->id) }}");
+            $(document).ready(function (e) {
+                //$("body").append("<iframe src='' id='iframe_updater' style='display: none'></iframe>");
+                //$("#iframe_updater").attr('src', "{{-- route('pages.update.template', $page->id) --}}");
 
-                    $("#btn_reload_editor").click(function(e) {
+                $("#btn_reload_editor").click(function (e) {
 
-                        e.preventDefault();
+                    e.preventDefault();
 
-                        var button = $(this);
+                    var button = $(this);
 
-                        $("body #iframe_updater").remove();
-                        $("body").append("<iframe src='' style='width: 100%; height: 500px;' id='iframe_updater' style='display: none'></iframe>");
-                        $("#iframe_updater").attr('src', "{{ route('pages.update.template', [$page->id, 'flag'=>'autoupdate']) }}");
-                        $(this).html('<i class="fa fa-refresh fa-spin"></i>');
-                        //window.open("route('pages.update.template', [$page->id, 'flag'=>'autoupdate'])");
-                        $("#iframe_updater").load(function () {
+                    //update the page status to indicate page is about to upgrade
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{ route('page.upgrade.status.update', $page->id) }}",
+                        data: "_token={{ csrf_token() }}&status=1",
+                        beforeSend: function () {
+                            $("#btn_reload_editor").html('<i class="fa fa-refresh fa-spin"></i>');
+                        },
+                        success: function (response) {
+                            console.log(response);
+                        },
+                        error: function (a, b) {
+                            console.log(a.responseText);
+                        },
+                        complete: function () {
+                            //$("body #iframe_updater").remove();
+                            $("body").append("<iframe src='' style='width: 100%; height: 500px;' id='iframe_updater' style='display: none'></iframe>");
+                            $("#iframe_updater").attr('src', "{{ route('pages.update.template', [$page->id, 'flag'=>'autoupdate']) }}");
+                            $(button).html('<i class="fa fa-refresh fa-spin"></i>');
+                            $(button).attr('disabled', 'disabled');
+                            //window.open("route('pages.update.template', [$page->id, 'flag'=>'autoupdate'])");
+                            /**/
 
-                            $(button).html('<i class="fa fa-refresh" aria-hidden="true"></i>');
-                            alert("Reload finish");
-
-                            ///////////
-                            $.ajax({
-                                type: 'GET',
-                                //url: $("#hid_base_url").val() + '/page/' + page_id + '/screenshoot',
-                                url: "{{ route('page.screenshoot', $page->id) }}",
-                                data: "_token={{ csrf_token() }}",
-                                beforeSend: function () {
-                                    //$(button).prop('disable', true);
-                                    //$(row).css('opacity', '0.50');
-                                },
-                                success: function (response) {
-                                    console.log(response);
-                                    console.log("{{ route('page.scereenshoot.view', $page->id) }}");
-                                    $("#p2i_demo").attr('src', response);
-                                },
-                                error: function (a, b) {
-                                    document.write(a.responseText);
-                                }
-                            });
-                        });
+                            change_page_status();
+                        }
                     });
+
+
+                    /*$("#iframe_updater").load(function () {
+                        change_page_status();
+                    });*/
+
                 });
+
+
+                function change_page_status() {
+                    var init_function;
+
+                    //alert(this);
+
+                    $.ajax({
+                        type: 'GET',
+                        url: "{{ route('page.upgrade.status.check', $page->id) }}",
+                        data: "_token={{ csrf_token() }}",
+                        beforeSend: function () {
+                            if (!$("#btn_reload_editor > i").hasClass('fa-spin'))
+                                $("#btn_reload_editor").html('<i class="fa fa-refresh fa-spin"></i>');
+                        },
+                        success: function (response) {
+                            console.log(response);
+                            /*
+                            $("#p2i_demo").attr('src', response);*/
+                            var json = JSON.parse(response);
+                            var init_function;
+
+                            console.log("STATUS: " + json.page_status);
+
+                            if (json.page_status == 2) {
+                                $("#iframe_updater").remove();
+                                $("#btn_reload_editor").attr('disabled', false);
+                                $("#btn_reload_editor").html('<i class="fa fa-refresh"></i>');
+
+                                //init_function = setInterval(change_page_status, 2000);
+                            } else {
+                                //change_page_status();
+                                setTimeout(function() {
+                                    $("#iframe_updater").remove();
+                                    $("#btn_reload_editor").attr('disabled', false);
+                                    $("#btn_reload_editor").html('<i class="fa fa-refresh"></i>');
+                                }, 5000);
+                            }
+                        },
+                        error: function (a, b) {
+                            document.write(a.responseText);
+                        }
+                    });
+                }
+            });
         </script>
     @endif
 @endsection

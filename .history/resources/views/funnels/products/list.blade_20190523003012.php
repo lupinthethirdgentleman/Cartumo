@@ -1192,7 +1192,7 @@
 
             //$("#shopifyModal .modal-body").append(""); //ajax-loader.gif
 
-            console.log("This", {{ $funnel->type }});
+
             $.ajax({
                 type: 'GET',
                 url: "{{ route('bump.product.list', array($currentStep->id)) }}",
@@ -1202,7 +1202,7 @@
                     $("#bump_product_list").html(response);
                 },
                 error: function (a, b) {
-                    // console.log(a.responseText);
+                    console.log(a.responseText);
                 }
             });
         });

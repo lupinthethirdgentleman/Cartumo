@@ -47,7 +47,7 @@ class ProductsController extends Controller {
 		$coupons = Coupon::where( 'user_id', Auth::id() )->get();
 
 		//$userIntegrations = UserIntegration::where('service_type', '!=', 'shopify')->orderBy('service_type')->get();
-		// $productEmailIntegration = ProductEmailIntegration::where('step_id', '=', $currentStep->id)->first();
+		//$productEmailIntegration = ProductEmailIntegration::where('step_id', '=', $currentStep->id)->first();
 		$product = array();
 
 		//echo $stepProducts; die;
